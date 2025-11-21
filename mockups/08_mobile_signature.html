@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>サイン取得 - ドライバー用モバイル</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: 'Noto Sans JP', sans-serif;
+            background: #f5f5f5;
+            max-width: 414px;
+            margin: 0 auto;
+            box-shadow: 0 0 20px rgba(0,0,0,0.1);
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+        .mobile-header {
+            background: #2196F3;
+            color: white;
+            padding: 15px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .back-btn {
+            font-size: 20px;
+            cursor: pointer;
+        }
+        .header-title {
+            font-size: 18px;
+            font-weight: 600;
+        }
+        .info-section {
+            background: white;
+            padding: 20px;
+            border-bottom: 2px solid #e0e0e0;
+        }
+        .location-name {
+            font-size: 16px;
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 5px;
+        }
+        .receiver-name {
+            font-size: 14px;
+            color: #666;
+        }
+        .instruction {
+            background: #fff3e0;
+            padding: 15px;
+            margin: 0;
+            text-align: center;
+        }
+        .instruction-text {
+            font-size: 14px;
+            color: #f57c00;
+            line-height: 1.6;
+        }
+        .canvas-container {
+            flex: 1;
+            background: white;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+        }
+        .canvas-wrapper {
+            flex: 1;
+            border: 2px dashed #2196F3;
+            border-radius: 8px;
+            position: relative;
+            background: #fafafa;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        #signatureCanvas {
+            width: 100%;
+            height: 100%;
+            cursor: crosshair;
+        }
+        .placeholder-text {
+            position: absolute;
+            color: #bbb;
+            font-size: 16px;
+            pointer-events: none;
+        }
+        .canvas-actions {
+            display: flex;
+            gap: 10px;
+            margin-top: 15px;
+        }
+        .btn-clear {
+            flex: 1;
+            padding: 12px;
+            background: white;
+            color: #f44336;
+            border: 2px solid #f44336;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+        }
+        .btn-complete {
+            flex: 2;
+            padding: 12px;
+            background: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+        .notice {
+            background: white;
+            padding: 15px;
+            text-align: center;
+            border-top: 1px solid #e0e0e0;
+        }
+        .notice-text {
+            font-size: 12px;
+            color: #666;
+            line-height: 1.6;
+        }
+    </style>
+</head>
+<body>
+    <!-- ヘッダー -->
+    <div class="mobile-header">
+        <div class="back-btn">←</div>
+        <div class="header-title">サイン取得</div>
+    </div>
+
+    <!-- 配送先・受領者情報 -->
+    <div class="info-section">
+        <div class="location-name">配送先: 中野倉庫</div>
+        <div class="receiver-name">受領者: 田中 一郎</div>
+    </div>
+
+    <!-- 指示 -->
+    <div class="instruction">
+        <p class="instruction-text">
+            下記にサインをお願いします<br>
+            指でサイン欄に署名してください
+        </p>
+    </div>
+
+    <!-- サインキャンバス -->
+    <div class="canvas-container">
+        <div class="canvas-wrapper">
+            <canvas id="signatureCanvas"></canvas>
+            <div class="placeholder-text" id="placeholder">ここにサインしてください</div>
+        </div>
+        <div class="canvas-actions">
+            <button class="btn-clear" id="clearBtn">🗑️ クリア</button>
+            <button class="btn-complete" id="completeBtn">✓ 完了</button>
+        </div>
+    </div>
+
+    <!-- 注意書き -->
+    <div class="notice">
+        <p class="notice-text">
+            ※ このサインは配送完了の証明となります<br>
+            受領者ご本人の署名をお願いします
+        </p>
+    </div>
+
+    <script>
+        // キャンバス設定
+        const canvas = document.getElementById('signatureCanvas');
+        const ctx = canvas.getContext('2d');
+        const placeholder = document.getElementById('placeholder');
+        let isDrawing = false;
+        let hasSignature = false;
+
+        // キャンバスサイズ設定
+        function resizeCanvas() {
+            const wrapper = canvas.parentElement;
+            canvas.width = wrapper.clientWidth - 4;
+            canvas.height = wrapper.clientHeight - 4;
+            
+            // 描画設定
+            ctx.strokeStyle = '#000';
+            ctx.lineWidth = 2;
+            ctx.lineCap = 'round';
+            ctx.lineJoin = 'round';
+        }
+
+        resizeCanvas();
+        window.addEventListener('resize', resizeCanvas);
+
+        // 描画処理
+        function startDrawing(e) {
+            isDrawing = true;
+            const rect = canvas.getBoundingClientRect();
+            const x = (e.clientX || e.touches[0].clientX) - rect.left;
+            const y = (e.clientY || e.touches[0].clientY) - rect.top;
+            ctx.beginPath();
+            ctx.moveTo(x, y);
+            
+            if (!hasSignature) {
+                hasSignature = true;
+                placeholder.style.display = 'none';
+            }
+        }
+
+        function draw(e) {
+            if (!isDrawing) return;
+            e.preventDefault();
+            
+            const rect = canvas.getBoundingClientRect();
+            const x = (e.clientX || e.touches[0].clientX) - rect.left;
+            const y = (e.clientY || e.touches[0].clientY) - rect.top;
+            
+            ctx.lineTo(x, y);
+            ctx.stroke();
+        }
+
+        function stopDrawing() {
+            isDrawing = false;
+        }
+
+        // イベントリスナー（マウス）
+        canvas.addEventListener('mousedown', startDrawing);
+        canvas.addEventListener('mousemove', draw);
+        canvas.addEventListener('mouseup', stopDrawing);
+        canvas.addEventListener('mouseout', stopDrawing);
+
+        // イベントリスナー（タッチ）
+        canvas.addEventListener('touchstart', startDrawing);
+        canvas.addEventListener('touchmove', draw);
+        canvas.addEventListener('touchend', stopDrawing);
+
+        // クリアボタン
+        document.getElementById('clearBtn').addEventListener('click', () => {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            hasSignature = false;
+            placeholder.style.display = 'block';
+        });
+
+        // 完了ボタン
+        document.getElementById('completeBtn').addEventListener('click', () => {
+            if (!hasSignature) {
+                alert('サインを入力してください');
+                return;
+            }
+            
+            // サインデータを取得
+            const signatureData = canvas.toDataURL('image/png');
+            console.log('Signature saved:', signatureData);
+            
+            // 前の画面に戻る（実際の実装では）
+            alert('サインを保存しました');
+            // window.history.back();
+        });
+
+        // 戻るボタン
+        document.querySelector('.back-btn').addEventListener('click', () => {
+            if (hasSignature) {
+                if (confirm('入力したサインが破棄されます。よろしいですか？')) {
+                    window.history.back();
+                }
+            } else {
+                window.history.back();
+            }
+        });
+    </script>
+</body>
+</html>

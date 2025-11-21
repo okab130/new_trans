@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ログイン - トラック配送管理システム</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: 'Noto Sans JP', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        .login-container {
+            background: white;
+            padding: 40px;
+            border-radius: 12px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+            width: 400px;
+        }
+        .logo {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        .logo-icon {
+            width: 80px;
+            height: 80px;
+            background: #2196F3;
+            border-radius: 50%;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 36px;
+            color: white;
+            margin-bottom: 10px;
+        }
+        h1 {
+            text-align: center;
+            color: #333;
+            font-size: 20px;
+            margin-bottom: 30px;
+        }
+        .form-group {
+            margin-bottom: 20px;
+        }
+        label {
+            display: block;
+            margin-bottom: 8px;
+            color: #555;
+            font-size: 14px;
+        }
+        input[type="text"],
+        input[type="password"] {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            font-size: 14px;
+            transition: border-color 0.3s;
+        }
+        input[type="text"]:focus,
+        input[type="password"]:focus {
+            outline: none;
+            border-color: #2196F3;
+        }
+        .checkbox-group {
+            display: flex;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+        input[type="checkbox"] {
+            margin-right: 8px;
+        }
+        .checkbox-group label {
+            margin-bottom: 0;
+            font-size: 13px;
+        }
+        .btn-login {
+            width: 100%;
+            padding: 14px;
+            background: #2196F3;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+        .btn-login:hover {
+            background: #1976D2;
+        }
+        .forgot-password {
+            text-align: center;
+            margin-top: 20px;
+        }
+        .forgot-password a {
+            color: #2196F3;
+            text-decoration: none;
+            font-size: 13px;
+        }
+        .forgot-password a:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+    <div class="login-container">
+        <div class="logo">
+            <div class="logo-icon">🚚</div>
+            <h1>トラック配送管理システム</h1>
+        </div>
+        <form>
+            <div class="form-group">
+                <label for="loginId">ログインID</label>
+                <input type="text" id="loginId" placeholder="ログインIDを入力">
+            </div>
+            <div class="form-group">
+                <label for="password">パスワード</label>
+                <input type="password" id="password" placeholder="パスワードを入力">
+            </div>
+            <div class="checkbox-group">
+                <input type="checkbox" id="remember">
+                <label for="remember">ログイン状態を保持する</label>
+            </div>
+            <button type="submit" class="btn-login">ログイン</button>
+            <div class="forgot-password">
+                <a href="#">パスワードを忘れた方はこちら</a>
+            </div>
+        </form>
+    </div>
+</body>
+</html>

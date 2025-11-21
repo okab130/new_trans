@@ -1,0 +1,500 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>配車計画作成 - トラック配送管理システム</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: 'Noto Sans JP', sans-serif;
+            background: #f5f5f5;
+        }
+        .header {
+            background: white;
+            padding: 15px 30px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .header-left {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+        .logo { font-size: 24px; }
+        .app-name {
+            font-size: 18px;
+            font-weight: bold;
+            color: #333;
+        }
+        .container {
+            max-width: 1600px;
+            margin: 0 auto;
+            padding: 30px;
+        }
+        .page-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+        .page-title {
+            font-size: 24px;
+            color: #333;
+        }
+        .header-actions {
+            display: flex;
+            gap: 10px;
+        }
+        .btn {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 6px;
+            font-size: 14px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        .btn-primary {
+            background: #2196F3;
+            color: white;
+        }
+        .btn-primary:hover {
+            background: #1976D2;
+        }
+        .btn-success {
+            background: #4CAF50;
+            color: white;
+        }
+        .btn-success:hover {
+            background: #388E3C;
+        }
+        .btn-secondary {
+            background: white;
+            color: #666;
+            border: 1px solid #ddd;
+        }
+        .main-grid {
+            display: grid;
+            grid-template-columns: 350px 1fr;
+            gap: 20px;
+        }
+        .panel {
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .panel-header {
+            padding: 20px;
+            border-bottom: 1px solid #f0f0f0;
+            font-size: 16px;
+            font-weight: 600;
+            color: #333;
+        }
+        .panel-body {
+            padding: 20px;
+        }
+        .unassigned-list {
+            max-height: 600px;
+            overflow-y: auto;
+        }
+        .order-item {
+            padding: 15px;
+            border: 1px solid #e0e0e0;
+            border-radius: 6px;
+            margin-bottom: 10px;
+            cursor: move;
+            transition: all 0.3s;
+        }
+        .order-item:hover {
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            transform: translateY(-2px);
+        }
+        .order-number {
+            font-size: 13px;
+            color: #666;
+            margin-bottom: 5px;
+        }
+        .order-info {
+            font-size: 14px;
+            color: #333;
+            margin-bottom: 5px;
+        }
+        .order-details {
+            font-size: 12px;
+            color: #666;
+            display: flex;
+            gap: 15px;
+        }
+        .btn-assign {
+            width: 100%;
+            padding: 8px;
+            background: #2196F3;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            font-size: 13px;
+            cursor: pointer;
+            margin-top: 10px;
+        }
+        .route-card {
+            padding: 20px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            margin-bottom: 15px;
+            transition: all 0.3s;
+        }
+        .route-card:hover {
+            border-color: #2196F3;
+        }
+        .route-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+        .route-title {
+            font-size: 16px;
+            font-weight: 600;
+            color: #333;
+        }
+        .route-info {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+        .info-item {
+            font-size: 13px;
+        }
+        .info-label {
+            color: #666;
+        }
+        .info-value {
+            color: #333;
+            font-weight: 600;
+        }
+        .route-stats {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 10px;
+            padding: 15px;
+            background: #f9f9f9;
+            border-radius: 6px;
+            margin-bottom: 15px;
+        }
+        .stat-item {
+            text-align: center;
+        }
+        .stat-label {
+            font-size: 12px;
+            color: #666;
+        }
+        .stat-value {
+            font-size: 18px;
+            font-weight: 600;
+            color: #333;
+        }
+        .capacity-bar {
+            margin-top: 15px;
+        }
+        .capacity-label {
+            font-size: 13px;
+            color: #666;
+            margin-bottom: 5px;
+        }
+        .progress-bar {
+            width: 100%;
+            height: 20px;
+            background: #e0e0e0;
+            border-radius: 10px;
+            overflow: hidden;
+        }
+        .progress-fill {
+            height: 100%;
+            background: #4CAF50;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 12px;
+            font-weight: 600;
+        }
+        .progress-fill.warning {
+            background: #FF9800;
+        }
+        .progress-fill.danger {
+            background: #f44336;
+        }
+        .route-actions {
+            display: flex;
+            gap: 10px;
+        }
+        .btn-sm {
+            padding: 6px 12px;
+            font-size: 13px;
+        }
+        .new-route-btn {
+            width: 100%;
+            padding: 20px;
+            background: white;
+            border: 2px dashed #2196F3;
+            border-radius: 8px;
+            color: #2196F3;
+            font-size: 16px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        .new-route-btn:hover {
+            background: #f0f8ff;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <div class="header-left">
+            <div class="logo">🚚</div>
+            <div class="app-name">トラック配送管理</div>
+        </div>
+    </div>
+
+    <div class="container">
+        <div class="page-header">
+            <h1 class="page-title">配車計画作成 - 2025/01/22（水） 東京拠点</h1>
+            <div class="header-actions">
+                <button class="btn btn-secondary">💾 下書き保存</button>
+                <button class="btn btn-primary">🔄 ルート最適化実行</button>
+                <button class="btn btn-success">✓ 確定</button>
+                <button class="btn btn-secondary">🖨️ 印刷</button>
+            </div>
+        </div>
+
+        <div class="main-grid">
+            <!-- 未割当配送依頼 -->
+            <div class="panel">
+                <div class="panel-header">
+                    未割当配送依頼 (18件)
+                </div>
+                <div class="panel-body">
+                    <div class="unassigned-list">
+                        <div class="order-item">
+                            <div class="order-number">D250120-015</div>
+                            <div class="order-info">ABC商事 → 新宿営業所</div>
+                            <div class="order-details">
+                                <span>⏰ 10:00-12:00</span>
+                                <span>📦 250kg</span>
+                            </div>
+                            <button class="btn-assign">割当</button>
+                        </div>
+
+                        <div class="order-item">
+                            <div class="order-number">D250120-016</div>
+                            <div class="order-info">XYZ物産 → 渋谷倉庫</div>
+                            <div class="order-details">
+                                <span>⏰ 午後</span>
+                                <span>📦 180kg</span>
+                            </div>
+                            <button class="btn-assign">割当</button>
+                        </div>
+
+                        <div class="order-item">
+                            <div class="order-number">D250120-017</div>
+                            <div class="order-info">DEF工業 → 池袋工場</div>
+                            <div class="order-details">
+                                <span>⏰ 午前</span>
+                                <span>📦 320kg</span>
+                            </div>
+                            <button class="btn-assign">割当</button>
+                        </div>
+
+                        <div class="order-item">
+                            <div class="order-number">D250120-018</div>
+                            <div class="order-info">GHI商店 → 中野店舗</div>
+                            <div class="order-details">
+                                <span>⏰ 14:00-16:00</span>
+                                <span>📦 150kg</span>
+                            </div>
+                            <button class="btn-assign">割当</button>
+                        </div>
+
+                        <div class="order-item">
+                            <div class="order-number">D250120-019</div>
+                            <div class="order-info">JKL運輸 → 杉並センター</div>
+                            <div class="order-details">
+                                <span>⏰ 午前</span>
+                                <span>📦 280kg</span>
+                            </div>
+                            <button class="btn-assign">割当</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 配車済ルート -->
+            <div class="panel">
+                <div class="panel-header">
+                    配車済ルート (3ルート)
+                </div>
+                <div class="panel-body">
+                    <!-- ルート R-001 -->
+                    <div class="route-card">
+                        <div class="route-header">
+                            <div class="route-title">ルート R-001</div>
+                            <div class="route-actions">
+                                <button class="btn btn-secondary btn-sm">📋 詳細</button>
+                                <button class="btn btn-secondary btn-sm">✏️ 編集</button>
+                            </div>
+                        </div>
+                        <div class="route-info">
+                            <div class="info-item">
+                                <span class="info-label">車両: </span>
+                                <span class="info-value">T-001 (2t)</span>
+                            </div>
+                            <div class="info-item">
+                                <span class="info-label">ドライバー: </span>
+                                <span class="info-value">佐藤 太郎</span>
+                            </div>
+                            <div class="info-item">
+                                <span class="info-label">出発予定: </span>
+                                <span class="info-value">08:00</span>
+                            </div>
+                            <div class="info-item">
+                                <span class="info-label">帰庫予定: </span>
+                                <span class="info-value">13:00</span>
+                            </div>
+                        </div>
+                        <div class="route-stats">
+                            <div class="stat-item">
+                                <div class="stat-label">配送先</div>
+                                <div class="stat-value">5件</div>
+                            </div>
+                            <div class="stat-item">
+                                <div class="stat-label">距離</div>
+                                <div class="stat-value">45km</div>
+                            </div>
+                            <div class="stat-item">
+                                <div class="stat-label">時間</div>
+                                <div class="stat-value">4h</div>
+                            </div>
+                        </div>
+                        <div class="capacity-bar">
+                            <div class="capacity-label">積載: 500kg / 1,200kg</div>
+                            <div class="progress-bar">
+                                <div class="progress-fill" style="width: 42%;">42%</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- ルート R-002 -->
+                    <div class="route-card">
+                        <div class="route-header">
+                            <div class="route-title">ルート R-002</div>
+                            <div class="route-actions">
+                                <button class="btn btn-secondary btn-sm">📋 詳細</button>
+                                <button class="btn btn-secondary btn-sm">✏️ 編集</button>
+                            </div>
+                        </div>
+                        <div class="route-info">
+                            <div class="info-item">
+                                <span class="info-label">車両: </span>
+                                <span class="info-value">T-003 (4t)</span>
+                            </div>
+                            <div class="info-item">
+                                <span class="info-label">ドライバー: </span>
+                                <span class="info-value">鈴木 花子</span>
+                            </div>
+                            <div class="info-item">
+                                <span class="info-label">出発予定: </span>
+                                <span class="info-value">08:00</span>
+                            </div>
+                            <div class="info-item">
+                                <span class="info-label">帰庫予定: </span>
+                                <span class="info-value">14:30</span>
+                            </div>
+                        </div>
+                        <div class="route-stats">
+                            <div class="stat-item">
+                                <div class="stat-label">配送先</div>
+                                <div class="stat-value">8件</div>
+                            </div>
+                            <div class="stat-item">
+                                <div class="stat-label">距離</div>
+                                <div class="stat-value">62km</div>
+                            </div>
+                            <div class="stat-item">
+                                <div class="stat-label">時間</div>
+                                <div class="stat-value">5.5h</div>
+                            </div>
+                        </div>
+                        <div class="capacity-bar">
+                            <div class="capacity-label">積載: 1,800kg / 3,000kg</div>
+                            <div class="progress-bar">
+                                <div class="progress-fill" style="width: 60%;">60%</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- ルート R-003 -->
+                    <div class="route-card">
+                        <div class="route-header">
+                            <div class="route-title">ルート R-003</div>
+                            <div class="route-actions">
+                                <button class="btn btn-secondary btn-sm">📋 詳細</button>
+                                <button class="btn btn-secondary btn-sm">✏️ 編集</button>
+                            </div>
+                        </div>
+                        <div class="route-info">
+                            <div class="info-item">
+                                <span class="info-label">車両: </span>
+                                <span class="info-value">T-005 (4t)</span>
+                            </div>
+                            <div class="info-item">
+                                <span class="info-label">ドライバー: </span>
+                                <span class="info-value">田中 一郎</span>
+                            </div>
+                            <div class="info-item">
+                                <span class="info-label">出発予定: </span>
+                                <span class="info-value">09:00</span>
+                            </div>
+                            <div class="info-item">
+                                <span class="info-label">帰庫予定: </span>
+                                <span class="info-value">15:00</span>
+                            </div>
+                        </div>
+                        <div class="route-stats">
+                            <div class="stat-item">
+                                <div class="stat-label">配送先</div>
+                                <div class="stat-value">6件</div>
+                            </div>
+                            <div class="stat-item">
+                                <div class="stat-label">距離</div>
+                                <div class="stat-value">58km</div>
+                            </div>
+                            <div class="stat-item">
+                                <div class="stat-label">時間</div>
+                                <div class="stat-value">5h</div>
+                            </div>
+                        </div>
+                        <div class="capacity-bar">
+                            <div class="capacity-label">積載: 2,400kg / 3,000kg</div>
+                            <div class="progress-bar">
+                                <div class="progress-fill warning" style="width: 80%;">80%</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 新規ルート作成 -->
+                    <button class="new-route-btn">
+                        ➕ 新規ルート作成
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

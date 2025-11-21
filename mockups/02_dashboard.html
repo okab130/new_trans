@@ -1,0 +1,329 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ダッシュボード - トラック配送管理システム</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: 'Noto Sans JP', sans-serif;
+            background: #f5f5f5;
+        }
+        /* ヘッダー */
+        .header {
+            background: white;
+            padding: 15px 30px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .header-left {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+        .logo {
+            font-size: 24px;
+        }
+        .app-name {
+            font-size: 18px;
+            font-weight: bold;
+            color: #333;
+        }
+        .header-right {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+        .notification {
+            position: relative;
+            cursor: pointer;
+        }
+        .notification-badge {
+            position: absolute;
+            top: -5px;
+            right: -5px;
+            background: #f44336;
+            color: white;
+            border-radius: 50%;
+            width: 18px;
+            height: 18px;
+            font-size: 11px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .user-menu {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            cursor: pointer;
+        }
+        /* コンテンツエリア */
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 30px;
+        }
+        .page-title {
+            font-size: 24px;
+            color: #333;
+            margin-bottom: 10px;
+        }
+        .page-subtitle {
+            font-size: 14px;
+            color: #666;
+            margin-bottom: 30px;
+        }
+        /* サマリーカード */
+        .summary-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+        .summary-card {
+            background: white;
+            padding: 25px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .summary-card h3 {
+            font-size: 14px;
+            color: #666;
+            margin-bottom: 10px;
+        }
+        .summary-card .value {
+            font-size: 32px;
+            font-weight: bold;
+            color: #333;
+        }
+        .summary-card .unit {
+            font-size: 16px;
+            color: #666;
+        }
+        /* クイックアクション */
+        .quick-actions {
+            background: white;
+            padding: 25px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            margin-bottom: 30px;
+        }
+        .quick-actions h2 {
+            font-size: 16px;
+            color: #333;
+            margin-bottom: 20px;
+        }
+        .action-buttons {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 15px;
+        }
+        .action-btn {
+            padding: 15px;
+            background: #2196F3;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            font-size: 14px;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+        .action-btn:hover {
+            background: #1976D2;
+        }
+        /* 進捗エリア */
+        .progress-section {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+        .card {
+            background: white;
+            padding: 25px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .card h2 {
+            font-size: 16px;
+            color: #333;
+            margin-bottom: 15px;
+        }
+        .progress-bar {
+            width: 100%;
+            height: 30px;
+            background: #e0e0e0;
+            border-radius: 15px;
+            overflow: hidden;
+            margin-top: 10px;
+        }
+        .progress-fill {
+            height: 100%;
+            background: #2196F3;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+            font-size: 14px;
+        }
+        .kpi-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 0;
+            border-bottom: 1px solid #eee;
+        }
+        .kpi-item:last-child {
+            border-bottom: none;
+        }
+        .kpi-label {
+            font-size: 14px;
+            color: #666;
+        }
+        .kpi-value {
+            font-size: 18px;
+            font-weight: bold;
+            color: #2196F3;
+        }
+        /* アラート */
+        .alerts {
+            background: white;
+            padding: 25px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .alerts h2 {
+            font-size: 16px;
+            color: #333;
+            margin-bottom: 15px;
+        }
+        .alert-item {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            padding: 15px;
+            background: #fff3e0;
+            border-left: 4px solid #ff9800;
+            border-radius: 4px;
+            margin-bottom: 10px;
+        }
+        .alert-icon {
+            font-size: 24px;
+        }
+        .alert-content {
+            flex: 1;
+        }
+        .alert-text {
+            font-size: 14px;
+            color: #333;
+        }
+        .alert-time {
+            font-size: 12px;
+            color: #666;
+            margin-top: 5px;
+        }
+    </style>
+</head>
+<body>
+    <!-- ヘッダー -->
+    <div class="header">
+        <div class="header-left">
+            <div class="logo">🚚</div>
+            <div class="app-name">トラック配送管理</div>
+        </div>
+        <div class="header-right">
+            <div class="notification">
+                🔔
+                <span class="notification-badge">3</span>
+            </div>
+            <div class="user-menu">
+                <span>配車担当者</span>
+                <span>▼</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- メインコンテンツ -->
+    <div class="container">
+        <h1 class="page-title">ダッシュボード</h1>
+        <p class="page-subtitle">2025/01/20（月） 東京拠点</p>
+
+        <!-- サマリーカード -->
+        <div class="summary-grid">
+            <div class="summary-card">
+                <h3>配送予定</h3>
+                <div class="value">45<span class="unit">件</span></div>
+            </div>
+            <div class="summary-card">
+                <h3>配送完了</h3>
+                <div class="value">32<span class="unit">件</span></div>
+            </div>
+            <div class="summary-card">
+                <h3>配送中</h3>
+                <div class="value">8<span class="unit">件</span></div>
+            </div>
+            <div class="summary-card" style="background: #fff3e0;">
+                <h3>問題</h3>
+                <div class="value" style="color: #ff9800;">2<span class="unit">件</span></div>
+            </div>
+        </div>
+
+        <!-- クイックアクション -->
+        <div class="quick-actions">
+            <h2>クイックアクション</h2>
+            <div class="action-buttons">
+                <button class="action-btn">📝 配送依頼登録</button>
+                <button class="action-btn">📋 配車計画作成</button>
+                <button class="action-btn">📍 進捗モニター</button>
+                <button class="action-btn">📊 実績確認</button>
+            </div>
+        </div>
+
+        <!-- 進捗セクション -->
+        <div class="progress-section">
+            <div class="card">
+                <h2>配送進捗状況</h2>
+                <p style="margin-bottom: 10px;">本日の配送完了率</p>
+                <div class="progress-bar">
+                    <div class="progress-fill" style="width: 71%;">71%</div>
+                </div>
+            </div>
+            <div class="card">
+                <h2>定時配送率（今月）</h2>
+                <div class="progress-bar">
+                    <div class="progress-fill" style="width: 94%; background: #4CAF50;">94%</div>
+                </div>
+                <p style="margin-top: 10px; font-size: 13px; color: #666;">目標: 95%</p>
+            </div>
+        </div>
+
+        <!-- アラート -->
+        <div class="alerts">
+            <h2>直近のアラート</h2>
+            <div class="alert-item">
+                <div class="alert-icon">⚠️</div>
+                <div class="alert-content">
+                    <div class="alert-text">R-003 ルート: 15分遅延見込み</div>
+                    <div class="alert-time">5分前</div>
+                </div>
+            </div>
+            <div class="alert-item">
+                <div class="alert-icon">⚠️</div>
+                <div class="alert-content">
+                    <div class="alert-text">R-007 ルート: 配送先不在報告あり</div>
+                    <div class="alert-time">12分前</div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

@@ -1,0 +1,386 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>配送実績入力 - ドライバー用モバイル</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: 'Noto Sans JP', sans-serif;
+            background: #f5f5f5;
+            max-width: 414px;
+            margin: 0 auto;
+            box-shadow: 0 0 20px rgba(0,0,0,0.1);
+        }
+        .mobile-header {
+            background: #2196F3;
+            color: white;
+            padding: 15px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .back-btn {
+            font-size: 20px;
+            cursor: pointer;
+        }
+        .header-title {
+            font-size: 18px;
+            font-weight: 600;
+        }
+        .content {
+            padding-bottom: 80px;
+        }
+        .location-card {
+            background: white;
+            padding: 20px;
+            border-bottom: 8px solid #f5f5f5;
+        }
+        .location-name {
+            font-size: 18px;
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 10px;
+        }
+        .location-address {
+            font-size: 14px;
+            color: #666;
+            line-height: 1.6;
+        }
+        .items-section {
+            background: white;
+            padding: 20px;
+            border-bottom: 8px solid #f5f5f5;
+        }
+        .section-title {
+            font-size: 14px;
+            font-weight: 600;
+            color: #666;
+            margin-bottom: 15px;
+        }
+        .item-list {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+        .item {
+            font-size: 14px;
+            color: #333;
+            padding: 10px;
+            background: #f9f9f9;
+            border-radius: 6px;
+        }
+        .form-section {
+            background: white;
+            padding: 20px;
+            border-bottom: 8px solid #f5f5f5;
+        }
+        .form-group {
+            margin-bottom: 20px;
+        }
+        .form-label {
+            font-size: 14px;
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+        .required {
+            color: #f44336;
+            font-size: 12px;
+        }
+        .radio-group {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+        .radio-option {
+            display: flex;
+            align-items: center;
+            padding: 12px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        .radio-option input[type="radio"] {
+            margin-right: 10px;
+            width: 20px;
+            height: 20px;
+        }
+        .radio-option.selected {
+            border-color: #2196F3;
+            background: #e3f2fd;
+        }
+        .time-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 10px;
+        }
+        .time-item {
+            display: flex;
+            flex-direction: column;
+        }
+        .time-label {
+            font-size: 13px;
+            color: #666;
+            margin-bottom: 5px;
+        }
+        .time-value {
+            font-size: 16px;
+            font-weight: 600;
+            color: #2196F3;
+            padding: 10px;
+            background: #f5f5f5;
+            border-radius: 6px;
+            text-align: center;
+        }
+        .input-text {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #e0e0e0;
+            border-radius: 6px;
+            font-size: 14px;
+        }
+        .input-text:focus {
+            outline: none;
+            border-color: #2196F3;
+        }
+        .select {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #e0e0e0;
+            border-radius: 6px;
+            font-size: 14px;
+            background: white;
+        }
+        .proof-section {
+            background: white;
+            padding: 20px;
+            border-bottom: 8px solid #f5f5f5;
+        }
+        .proof-buttons {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+        }
+        .btn-proof {
+            padding: 40px 20px;
+            border: 2px dashed #2196F3;
+            border-radius: 8px;
+            background: white;
+            color: #2196F3;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 10px;
+        }
+        .btn-proof .icon {
+            font-size: 32px;
+        }
+        .btn-proof.required {
+            background: #e3f2fd;
+        }
+        .remarks-section {
+            background: white;
+            padding: 20px;
+        }
+        textarea {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #e0e0e0;
+            border-radius: 6px;
+            font-size: 14px;
+            font-family: 'Noto Sans JP', sans-serif;
+            resize: vertical;
+            min-height: 80px;
+        }
+        textarea:focus {
+            outline: none;
+            border-color: #2196F3;
+        }
+        .bottom-actions {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            max-width: 414px;
+            margin: 0 auto;
+            background: white;
+            padding: 15px;
+            border-top: 1px solid #e0e0e0;
+            display: flex;
+            gap: 10px;
+            box-shadow: 0 -2px 10px rgba(0,0,0,0.1);
+        }
+        .btn-cancel {
+            flex: 1;
+            padding: 15px;
+            background: white;
+            color: #666;
+            border: 1px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+        }
+        .btn-submit {
+            flex: 2;
+            padding: 15px;
+            background: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+    <!-- ヘッダー -->
+    <div class="mobile-header">
+        <div class="back-btn">←</div>
+        <div class="header-title">配送実績入力</div>
+    </div>
+
+    <div class="content">
+        <!-- 配送先情報 -->
+        <div class="location-card">
+            <div class="location-name">中野倉庫</div>
+            <div class="location-address">
+                〒164-0001<br>
+                東京都中野区中野1-1-1<br>
+                中野ビル 2F
+            </div>
+        </div>
+
+        <!-- 配送品目 -->
+        <div class="items-section">
+            <div class="section-title">配送品目</div>
+            <div class="item-list">
+                <div class="item">• ノートPC 30個</div>
+                <div class="item">• モニター 20個</div>
+            </div>
+        </div>
+
+        <!-- 配送結果 -->
+        <div class="form-section">
+            <div class="form-group">
+                <div class="form-label">
+                    配送結果 <span class="required">*</span>
+                </div>
+                <div class="radio-group">
+                    <label class="radio-option selected">
+                        <input type="radio" name="result" value="complete" checked>
+                        <span>✅ 配送完了</span>
+                    </label>
+                    <label class="radio-option">
+                        <input type="radio" name="result" value="partial">
+                        <span>⚠️ 一部配送</span>
+                    </label>
+                    <label class="radio-option">
+                        <input type="radio" name="result" value="failed">
+                        <span>❌ 配送不可</span>
+                    </label>
+                </div>
+            </div>
+
+            <!-- 時刻情報 -->
+            <div class="form-group">
+                <div class="form-label">配送時刻</div>
+                <div class="time-grid">
+                    <div class="time-item">
+                        <div class="time-label">到着時刻</div>
+                        <div class="time-value">10:28</div>
+                    </div>
+                    <div class="time-item">
+                        <div class="time-label">作業開始</div>
+                        <div class="time-value">10:30</div>
+                    </div>
+                    <div class="time-item">
+                        <div class="time-label">作業終了</div>
+                        <div class="time-value">10:45</div>
+                    </div>
+                    <div class="time-item">
+                        <div class="time-label">出発時刻</div>
+                        <div class="time-value">10:47</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 受領者情報 -->
+            <div class="form-group">
+                <div class="form-label">
+                    受領者氏名 <span class="required">*</span>
+                </div>
+                <input type="text" class="input-text" placeholder="受領者の氏名を入力" value="田中 一郎">
+            </div>
+
+            <div class="form-group">
+                <div class="form-label">
+                    受領者関係 <span class="required">*</span>
+                </div>
+                <select class="select">
+                    <option selected>本人</option>
+                    <option>家族</option>
+                    <option>同僚</option>
+                    <option>その他</option>
+                </select>
+            </div>
+        </div>
+
+        <!-- 配送証跡 -->
+        <div class="proof-section">
+            <div class="section-title">配送証跡</div>
+            <div class="proof-buttons">
+                <button class="btn-proof">
+                    <div class="icon">📷</div>
+                    <div>写真撮影</div>
+                </button>
+                <button class="btn-proof required">
+                    <div class="icon">✍️</div>
+                    <div>サイン取得 *</div>
+                </button>
+            </div>
+        </div>
+
+        <!-- 備考 -->
+        <div class="remarks-section">
+            <div class="form-group">
+                <div class="form-label">備考</div>
+                <textarea placeholder="特記事項があれば入力してください"></textarea>
+            </div>
+        </div>
+    </div>
+
+    <!-- ボトムアクション -->
+    <div class="bottom-actions">
+        <button class="btn-cancel">キャンセル</button>
+        <button class="btn-submit">登録</button>
+    </div>
+
+    <script>
+        // ラジオボタンの選択状態を視覚的に表示
+        document.querySelectorAll('.radio-option').forEach(option => {
+            option.addEventListener('click', function() {
+                document.querySelectorAll('.radio-option').forEach(opt => {
+                    opt.classList.remove('selected');
+                });
+                this.classList.add('selected');
+                this.querySelector('input[type="radio"]').checked = true;
+            });
+        });
+    </script>
+</body>
+</html>

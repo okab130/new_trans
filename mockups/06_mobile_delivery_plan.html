@@ -1,0 +1,398 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>配送計画確認 - ドライバー用モバイル</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: 'Noto Sans JP', sans-serif;
+            background: #f5f5f5;
+            max-width: 414px;
+            margin: 0 auto;
+            box-shadow: 0 0 20px rgba(0,0,0,0.1);
+        }
+        /* ヘッダー */
+        .mobile-header {
+            background: #2196F3;
+            color: white;
+            padding: 15px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .header-title {
+            font-size: 18px;
+            font-weight: 600;
+        }
+        .notification-icon {
+            font-size: 20px;
+            position: relative;
+        }
+        .notification-badge {
+            position: absolute;
+            top: -5px;
+            right: -5px;
+            background: #f44336;
+            color: white;
+            border-radius: 50%;
+            width: 16px;
+            height: 16px;
+            font-size: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        /* ドライバー情報 */
+        .driver-info {
+            background: white;
+            padding: 20px;
+            border-bottom: 1px solid #e0e0e0;
+        }
+        .date-info {
+            font-size: 14px;
+            color: #666;
+            margin-bottom: 5px;
+        }
+        .route-info {
+            font-size: 16px;
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 5px;
+        }
+        .driver-name {
+            font-size: 18px;
+            font-weight: bold;
+            color: #2196F3;
+        }
+        /* スケジュール情報 */
+        .schedule-info {
+            background: white;
+            padding: 20px;
+            margin-bottom: 2px;
+        }
+        .schedule-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 15px;
+        }
+        .schedule-item {
+            font-size: 14px;
+        }
+        .schedule-label {
+            color: #666;
+            margin-bottom: 5px;
+        }
+        .schedule-value {
+            font-size: 16px;
+            font-weight: 600;
+            color: #333;
+        }
+        /* 進捗カード */
+        .progress-card {
+            background: white;
+            padding: 20px;
+            margin-bottom: 15px;
+        }
+        .progress-header {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 15px;
+        }
+        .progress-stats {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+        .stat-box {
+            text-align: center;
+        }
+        .stat-label {
+            font-size: 12px;
+            color: #666;
+            margin-bottom: 5px;
+        }
+        .stat-value {
+            font-size: 20px;
+            font-weight: bold;
+            color: #333;
+        }
+        .progress-bar-mobile {
+            width: 100%;
+            height: 30px;
+            background: #e0e0e0;
+            border-radius: 15px;
+            overflow: hidden;
+        }
+        .progress-fill-mobile {
+            height: 100%;
+            background: linear-gradient(90deg, #4CAF50 0%, #66BB6A 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+            font-size: 14px;
+        }
+        /* 次の配送先 */
+        .next-delivery {
+            background: #e3f2fd;
+            padding: 20px;
+            margin-bottom: 15px;
+        }
+        .next-label {
+            font-size: 13px;
+            color: #1976D2;
+            margin-bottom: 10px;
+        }
+        .next-location {
+            font-size: 18px;
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 5px;
+        }
+        .next-time {
+            font-size: 14px;
+            color: #666;
+            margin-bottom: 15px;
+        }
+        .next-actions {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+        }
+        .btn-mobile {
+            padding: 12px;
+            border: none;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 5px;
+        }
+        .btn-primary-mobile {
+            background: #2196F3;
+            color: white;
+        }
+        .btn-secondary-mobile {
+            background: white;
+            color: #2196F3;
+            border: 2px solid #2196F3;
+        }
+        /* 配送先リスト */
+        .delivery-list {
+            background: white;
+            padding: 20px;
+            margin-bottom: 15px;
+        }
+        .list-header {
+            font-size: 16px;
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 15px;
+        }
+        .delivery-item {
+            padding: 15px;
+            border: 1px solid #e0e0e0;
+            border-radius: 8px;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+        .delivery-item.completed {
+            background: #f1f8f4;
+            border-color: #4CAF50;
+        }
+        .delivery-item.current {
+            background: #e3f2fd;
+            border-color: #2196F3;
+            border-width: 2px;
+        }
+        .item-icon {
+            font-size: 24px;
+        }
+        .item-content {
+            flex: 1;
+        }
+        .item-number {
+            font-size: 12px;
+            color: #666;
+            margin-bottom: 3px;
+        }
+        .item-location {
+            font-size: 15px;
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 3px;
+        }
+        .item-time {
+            font-size: 13px;
+            color: #666;
+        }
+        .item-status {
+            font-size: 12px;
+            font-weight: 600;
+        }
+        .status-completed {
+            color: #4CAF50;
+        }
+        .status-next {
+            color: #2196F3;
+        }
+        /* ボトムアクション */
+        .bottom-action {
+            background: white;
+            padding: 15px;
+            border-top: 1px solid #e0e0e0;
+            position: sticky;
+            bottom: 0;
+        }
+        .btn-full {
+            width: 100%;
+            padding: 15px;
+            background: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+    <!-- ヘッダー -->
+    <div class="mobile-header">
+        <div class="header-title">配送計画</div>
+        <div class="notification-icon">
+            🔔
+            <span class="notification-badge">2</span>
+        </div>
+    </div>
+
+    <!-- ドライバー情報 -->
+    <div class="driver-info">
+        <div class="date-info">2025/01/22（水）</div>
+        <div class="route-info">ルート: R-001</div>
+        <div class="driver-name">佐藤 太郎</div>
+    </div>
+
+    <!-- スケジュール -->
+    <div class="schedule-info">
+        <div class="schedule-grid">
+            <div class="schedule-item">
+                <div class="schedule-label">出発予定</div>
+                <div class="schedule-value">08:00</div>
+            </div>
+            <div class="schedule-item">
+                <div class="schedule-label">帰庫予定</div>
+                <div class="schedule-value">13:00</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 進捗カード -->
+    <div class="progress-card">
+        <div class="progress-header">
+            <span style="font-size: 16px; font-weight: 600; color: #333;">本日の配送</span>
+        </div>
+        <div class="progress-stats">
+            <div class="stat-box">
+                <div class="stat-label">配送先</div>
+                <div class="stat-value">5件</div>
+            </div>
+            <div class="stat-box">
+                <div class="stat-label">完了</div>
+                <div class="stat-value" style="color: #4CAF50;">2件</div>
+            </div>
+            <div class="stat-box">
+                <div class="stat-label">残り</div>
+                <div class="stat-value" style="color: #FF9800;">3件</div>
+            </div>
+        </div>
+        <div class="progress-bar-mobile">
+            <div class="progress-fill-mobile" style="width: 40%;">40%</div>
+        </div>
+    </div>
+
+    <!-- 次の配送先 -->
+    <div class="next-delivery">
+        <div class="next-label">次の配送先</div>
+        <div class="next-location">📍 中野倉庫</div>
+        <div class="next-time">到着予定: 10:30</div>
+        <div class="next-actions">
+            <button class="btn-mobile btn-primary-mobile">
+                🗺️ ナビ開始
+            </button>
+            <button class="btn-mobile btn-secondary-mobile">
+                📋 詳細を見る
+            </button>
+        </div>
+    </div>
+
+    <!-- 配送先リスト -->
+    <div class="delivery-list">
+        <div class="list-header">配送先リスト</div>
+        
+        <div class="delivery-item completed">
+            <div class="item-icon">✅</div>
+            <div class="item-content">
+                <div class="item-number">1. 新宿営業所</div>
+                <div class="item-location">ABC商事 新宿営業所</div>
+                <div class="item-time">09:00 完了</div>
+            </div>
+        </div>
+
+        <div class="delivery-item completed">
+            <div class="item-icon">✅</div>
+            <div class="item-content">
+                <div class="item-number">2. 池袋店舗</div>
+                <div class="item-location">XYZ物産 池袋店舗</div>
+                <div class="item-time">09:45 完了</div>
+            </div>
+        </div>
+
+        <div class="delivery-item current">
+            <div class="item-icon">➡️</div>
+            <div class="item-content">
+                <div class="item-number">3. 中野倉庫</div>
+                <div class="item-location">DEF工業 中野倉庫</div>
+                <div class="item-time">10:30 次へ</div>
+            </div>
+        </div>
+
+        <div class="delivery-item">
+            <div class="item-icon">📍</div>
+            <div class="item-content">
+                <div class="item-number">4. 高円寺店</div>
+                <div class="item-location">GHI商店 高円寺店</div>
+                <div class="item-time">11:20</div>
+            </div>
+        </div>
+
+        <div class="delivery-item">
+            <div class="item-icon">📍</div>
+            <div class="item-content">
+                <div class="item-number">5. 荻窪配送C</div>
+                <div class="item-location">JKL運輸 荻窪配送センター</div>
+                <div class="item-time">12:10</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ボトムアクション -->
+    <div class="bottom-action">
+        <button class="btn-full">🗺️ 地図で見る</button>
+    </div>
+</body>
+</html>

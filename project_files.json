@@ -1,0 +1,149 @@
+[
+  {
+    "FullName": "C:\\Users\\user\\gh\\new_trans\\01_要件定義・前提条件.md"
+  },
+  {
+    "FullName": "C:\\Users\\user\\gh\\new_trans\\02_データモデル設計.md"
+  },
+  {
+    "FullName": "C:\\Users\\user\\gh\\new_trans\\03_運用フロー・機能概要設計.md"
+  },
+  {
+    "FullName": "C:\\Users\\user\\gh\\new_trans\\04_画面一覧・画面詳細設計.md"
+  },
+  {
+    "FullName": "C:\\Users\\user\\gh\\new_trans\\05_技術仕様・アーキテクチャ設計.md"
+  },
+  {
+    "FullName": "C:\\Users\\user\\gh\\new_trans\\project_files.json"
+  },
+  {
+    "FullName": "C:\\Users\\user\\gh\\new_trans\\PROJECT_SUMMARY.md"
+  },
+  {
+    "FullName": "C:\\Users\\user\\gh\\new_trans\\README.md"
+  },
+  {
+    "FullName": "C:\\Users\\user\\gh\\new_trans\\TESTING.md"
+  },
+  {
+    "FullName": "C:\\Users\\user\\gh\\new_trans\\.github\\copilot-instructions.md"
+  },
+  {
+    "FullName": "C:\\Users\\user\\gh\\new_trans\\backend\\.env.example"
+  },
+  {
+    "FullName": "C:\\Users\\user\\gh\\new_trans\\backend\\.gitignore"
+  },
+  {
+    "FullName": "C:\\Users\\user\\gh\\new_trans\\backend\\jest.config.js"
+  },
+  {
+    "FullName": "C:\\Users\\user\\gh\\new_trans\\backend\\package.json"
+  },
+  {
+    "FullName": "C:\\Users\\user\\gh\\new_trans\\backend\\tsconfig.json"
+  },
+  {
+    "FullName": "C:\\Users\\user\\gh\\new_trans\\backend\\prisma\\schema.prisma"
+  },
+  {
+    "FullName": "C:\\Users\\user\\gh\\new_trans\\backend\\src\\server.ts"
+  },
+  {
+    "FullName": "C:\\Users\\user\\gh\\new_trans\\backend\\src\\config\\database.ts"
+  },
+  {
+    "FullName": "C:\\Users\\user\\gh\\new_trans\\backend\\src\\controllers\\deliveryOrder.controller.ts"
+  },
+  {
+    "FullName": "C:\\Users\\user\\gh\\new_trans\\backend\\src\\middleware\\errorHandler.ts"
+  },
+  {
+    "FullName": "C:\\Users\\user\\gh\\new_trans\\backend\\src\\routes\\auth.routes.ts"
+  },
+  {
+    "FullName": "C:\\Users\\user\\gh\\new_trans\\backend\\src\\routes\\deliveryOrder.routes.ts"
+  },
+  {
+    "FullName": "C:\\Users\\user\\gh\\new_trans\\backend\\src\\services\\deliveryOrder.service.ts"
+  },
+  {
+    "FullName": "C:\\Users\\user\\gh\\new_trans\\backend\\src\\utils\\logger.ts"
+  },
+  {
+    "FullName": "C:\\Users\\user\\gh\\new_trans\\backend\\tests\\api.test.ts"
+  },
+  {
+    "FullName": "C:\\Users\\user\\gh\\new_trans\\backend\\tests\\setup.ts"
+  },
+  {
+    "FullName": "C:\\Users\\user\\gh\\new_trans\\frontend\\index.html"
+  },
+  {
+    "FullName": "C:\\Users\\user\\gh\\new_trans\\frontend\\package.json"
+  },
+  {
+    "FullName": "C:\\Users\\user\\gh\\new_trans\\frontend\\tsconfig.json"
+  },
+  {
+    "FullName": "C:\\Users\\user\\gh\\new_trans\\frontend\\vite.config.ts"
+  },
+  {
+    "FullName": "C:\\Users\\user\\gh\\new_trans\\frontend\\src\\App.tsx"
+  },
+  {
+    "FullName": "C:\\Users\\user\\gh\\new_trans\\frontend\\src\\main.tsx"
+  },
+  {
+    "FullName": "C:\\Users\\user\\gh\\new_trans\\frontend\\src\\pages\\Dashboard.tsx"
+  },
+  {
+    "FullName": "C:\\Users\\user\\gh\\new_trans\\frontend\\src\\pages\\DeliveryOrderList.tsx"
+  },
+  {
+    "FullName": "C:\\Users\\user\\gh\\new_trans\\frontend\\src\\pages\\Login.tsx"
+  },
+  {
+    "FullName": "C:\\Users\\user\\gh\\new_trans\\frontend\\src\\services\\api.ts"
+  },
+  {
+    "FullName": "C:\\Users\\user\\gh\\new_trans\\frontend\\src\\store\\index.ts"
+  },
+  {
+    "FullName": "C:\\Users\\user\\gh\\new_trans\\frontend\\src\\store\\slices\\authSlice.ts"
+  },
+  {
+    "FullName": "C:\\Users\\user\\gh\\new_trans\\frontend\\src\\store\\slices\\deliveryOrderSlice.ts"
+  },
+  {
+    "FullName": "C:\\Users\\user\\gh\\new_trans\\mockups\\01_login.html"
+  },
+  {
+    "FullName": "C:\\Users\\user\\gh\\new_trans\\mockups\\02_dashboard.html"
+  },
+  {
+    "FullName": "C:\\Users\\user\\gh\\new_trans\\mockups\\03_delivery_order_list.html"
+  },
+  {
+    "FullName": "C:\\Users\\user\\gh\\new_trans\\mockups\\04_route_planning.html"
+  },
+  {
+    "FullName": "C:\\Users\\user\\gh\\new_trans\\mockups\\05_tracking_monitor.html"
+  },
+  {
+    "FullName": "C:\\Users\\user\\gh\\new_trans\\mockups\\06_mobile_delivery_plan.html"
+  },
+  {
+    "FullName": "C:\\Users\\user\\gh\\new_trans\\mockups\\07_mobile_delivery_input.html"
+  },
+  {
+    "FullName": "C:\\Users\\user\\gh\\new_trans\\mockups\\08_mobile_signature.html"
+  },
+  {
+    "FullName": "C:\\Users\\user\\gh\\new_trans\\mockups\\09_kpi_dashboard.html"
+  },
+  {
+    "FullName": "C:\\Users\\user\\gh\\new_trans\\mockups\\README.md"
+  }
+]

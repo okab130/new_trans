@@ -1,0 +1,323 @@
+// Prisma Schema for Delivery Management System
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// 組織
+model Organization {
+  id            String   @id @default(cuid())
+  name          String
+  address       String?
+  phoneNumber   String?
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+  
+  branches      Branch[]
+  users         User[]
+
+  @@map("organizations")
+}
+
+// 拠点
+model Branch {
+  id             String   @id @default(cuid())
+  organizationId String
+  name           String
+  address        String
+  latitude       Float?
+  longitude      Float?
+  phoneNumber    String?
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+  
+  organization   Organization @relation(fields: [organizationId], references: [id])
+  vehicles       Vehicle[]
+  drivers        Driver[]
+  deliveryPlans  DeliveryPlan[]
+
+  @@map("branches")
+}
+
+// ユーザー
+model User {
+  id             String   @id @default(cuid())
+  organizationId String
+  loginId        String   @unique
+  passwordHash   String
+  name           String
+  email          String?
+  role           UserRole
+  isActive       Boolean  @default(true)
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+  
+  organization   Organization @relation(fields: [organizationId], references: [id])
+
+  @@map("users")
+}
+
+enum UserRole {
+  ADMIN
+  DISPATCHER
+  DRIVER
+}
+
+// 車両
+model Vehicle {
+  id                String   @id @default(cuid())
+  branchId          String
+  vehicleNumber     String   @unique
+  vehicleType       VehicleType
+  maxLoadWeight     Float
+  maxLoadVolume     Float?
+  fuelType          String?
+  status            VehicleStatus @default(AVAILABLE)
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+  
+  branch            Branch @relation(fields: [branchId], references: [id])
+  deliveryRoutes    DeliveryRoute[]
+
+  @@map("vehicles")
+}
+
+enum VehicleType {
+  LIGHT_TRUCK
+  MEDIUM_TRUCK
+  HEAVY_TRUCK
+}
+
+enum VehicleStatus {
+  AVAILABLE
+  IN_USE
+  MAINTENANCE
+  OUT_OF_SERVICE
+}
+
+// ドライバー
+model Driver {
+  id                String   @id @default(cuid())
+  branchId          String
+  driverCode        String   @unique
+  name              String
+  phoneNumber       String
+  licenseNumber     String?
+  isActive          Boolean  @default(true)
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+  
+  branch            Branch @relation(fields: [branchId], references: [id])
+  deliveryRoutes    DeliveryRoute[]
+
+  @@map("drivers")
+}
+
+// 顧客
+model Customer {
+  id                String   @id @default(cuid())
+  customerCode      String   @unique
+  name              String
+  phoneNumber       String?
+  email             String?
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+  
+  deliveryLocations DeliveryLocation[]
+  deliveryOrders    DeliveryOrder[]
+
+  @@map("customers")
+}
+
+// 配送先
+model DeliveryLocation {
+  id                String   @id @default(cuid())
+  customerId        String
+  locationName      String
+  postalCode        String?
+  address           String
+  latitude          Float?
+  longitude          Float?
+  contactPerson     String?
+  contactPhone      String?
+  accessNotes       String?
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+  
+  customer          Customer @relation(fields: [customerId], references: [id])
+  deliveryOrders    DeliveryOrder[]
+
+  @@map("delivery_locations")
+}
+
+// 配送依頼
+model DeliveryOrder {
+  id                      String   @id @default(cuid())
+  orderNumber             String   @unique
+  customerId              String
+  deliveryLocationId      String
+  requestedDeliveryDate   DateTime
+  specifiedTimeFrom       DateTime?
+  specifiedTimeTo         DateTime?
+  timeSpecificationType   TimeSpecificationType @default(ALL_DAY)
+  status                  OrderStatus @default(UNASSIGNED)
+  totalWeight             Float
+  totalVolume             Float?
+  remarks                 String?
+  createdAt               DateTime @default(now())
+  updatedAt               DateTime @updatedAt
+  
+  customer                Customer @relation(fields: [customerId], references: [id])
+  deliveryLocation        DeliveryLocation @relation(fields: [deliveryLocationId], references: [id])
+  items                   DeliveryItem[]
+  routeStops              RouteStop[]
+
+  @@map("delivery_orders")
+}
+
+enum TimeSpecificationType {
+  ALL_DAY
+  MORNING
+  AFTERNOON
+  SPECIFIED
+}
+
+enum OrderStatus {
+  UNASSIGNED
+  PLANNING
+  ASSIGNED
+  IN_PROGRESS
+  COMPLETED
+  CANCELLED
+}
+
+// 配送品目
+model DeliveryItem {
+  id                String   @id @default(cuid())
+  deliveryOrderId   String
+  itemName          String
+  quantity          Int
+  unit              String?
+  weight            Float?
+  volume            Float?
+  
+  deliveryOrder     DeliveryOrder @relation(fields: [deliveryOrderId], references: [id], onDelete: Cascade)
+
+  @@map("delivery_items")
+}
+
+// 配車計画
+model DeliveryPlan {
+  id                String   @id @default(cuid())
+  branchId          String
+  planDate          DateTime
+  status            PlanStatus @default(DRAFT)
+  confirmedAt       DateTime?
+  confirmedBy       String?
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+  
+  branch            Branch @relation(fields: [branchId], references: [id])
+  routes            DeliveryRoute[]
+
+  @@map("delivery_plans")
+}
+
+enum PlanStatus {
+  DRAFT
+  CONFIRMED
+  IN_PROGRESS
+  COMPLETED
+}
+
+// 配送ルート
+model DeliveryRoute {
+  id                      String   @id @default(cuid())
+  deliveryPlanId          String
+  routeNumber             String
+  vehicleId               String
+  driverId                String
+  scheduledDepartureTime  DateTime
+  scheduledReturnTime     DateTime
+  totalDistance           Float?
+  estimatedDuration       Int?
+  status                  RouteStatus @default(PLANNED)
+  createdAt               DateTime @default(now())
+  updatedAt               DateTime @updatedAt
+  
+  deliveryPlan            DeliveryPlan @relation(fields: [deliveryPlanId], references: [id])
+  vehicle                 Vehicle @relation(fields: [vehicleId], references: [id])
+  driver                  Driver @relation(fields: [driverId], references: [id])
+  stops                   RouteStop[]
+  executions              DeliveryExecution[]
+
+  @@map("delivery_routes")
+}
+
+enum RouteStatus {
+  PLANNED
+  IN_PROGRESS
+  COMPLETED
+  CANCELLED
+}
+
+// ルート停車地
+model RouteStop {
+  id                      String   @id @default(cuid())
+  deliveryRouteId         String
+  deliveryOrderId         String
+  stopSequence            Int
+  scheduledArrivalTime    DateTime
+  estimatedServiceTime    Int      @default(15)
+  status                  StopStatus @default(PENDING)
+  
+  deliveryRoute           DeliveryRoute @relation(fields: [deliveryRouteId], references: [id], onDelete: Cascade)
+  deliveryOrder           DeliveryOrder @relation(fields: [deliveryOrderId], references: [id])
+
+  @@unique([deliveryRouteId, stopSequence])
+  @@map("route_stops")
+}
+
+enum StopStatus {
+  PENDING
+  IN_PROGRESS
+  COMPLETED
+  SKIPPED
+}
+
+// 配送実績
+model DeliveryExecution {
+  id                  String   @id @default(cuid())
+  deliveryRouteId     String
+  deliveryOrderId     String
+  deliveryDate        DateTime
+  arrivalTime         DateTime?
+  workStartTime       DateTime?
+  workEndTime         DateTime?
+  departureTime       DateTime?
+  deliveryResult      DeliveryResult
+  recipientName       String?
+  recipientRelation   String?
+  signatureImageUrl   String?
+  photoUrls           String[]
+  remarks             String?
+  createdAt           DateTime @default(now())
+  updatedAt           DateTime @updatedAt
+  
+  deliveryRoute       DeliveryRoute @relation(fields: [deliveryRouteId], references: [id])
+
+  @@map("delivery_executions")
+}
+
+enum DeliveryResult {
+  COMPLETED
+  PARTIAL
+  FAILED_ABSENT
+  FAILED_REFUSED
+  FAILED_OTHER
+}

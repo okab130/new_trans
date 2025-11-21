@@ -1,0 +1,412 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>KPIダッシュボード - トラック配送管理システム</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: 'Noto Sans JP', sans-serif;
+            background: #f5f5f5;
+        }
+        .header {
+            background: white;
+            padding: 15px 30px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .header-left {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+        .logo { font-size: 24px; }
+        .app-name {
+            font-size: 18px;
+            font-weight: bold;
+            color: #333;
+        }
+        .container {
+            max-width: 1600px;
+            margin: 0 auto;
+            padding: 30px;
+        }
+        .page-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+        .page-title {
+            font-size: 24px;
+            color: #333;
+        }
+        .filter-section {
+            display: flex;
+            gap: 15px;
+            align-items: center;
+        }
+        .date-input {
+            padding: 8px 12px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 14px;
+        }
+        .select {
+            padding: 8px 12px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 14px;
+        }
+        .kpi-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+        .kpi-card {
+            background: white;
+            padding: 25px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .kpi-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+        .kpi-title {
+            font-size: 14px;
+            color: #666;
+        }
+        .kpi-target {
+            font-size: 12px;
+            color: #999;
+        }
+        .kpi-value {
+            font-size: 32px;
+            font-weight: bold;
+            color: #2196F3;
+            margin-bottom: 10px;
+        }
+        .kpi-value.success {
+            color: #4CAF50;
+        }
+        .kpi-value.warning {
+            color: #FF9800;
+        }
+        .progress-bar-kpi {
+            width: 100%;
+            height: 12px;
+            background: #e0e0e0;
+            border-radius: 6px;
+            overflow: hidden;
+            margin-bottom: 10px;
+        }
+        .progress-fill-kpi {
+            height: 100%;
+            background: linear-gradient(90deg, #2196F3 0%, #64B5F6 100%);
+            border-radius: 6px;
+        }
+        .progress-fill-kpi.success {
+            background: linear-gradient(90deg, #4CAF50 0%, #66BB6A 100%);
+        }
+        .achievement-rate {
+            font-size: 13px;
+            color: #666;
+        }
+        .achievement-value {
+            font-weight: 600;
+            color: #4CAF50;
+        }
+        .tabs {
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            margin-bottom: 20px;
+            overflow: hidden;
+        }
+        .tab-header {
+            display: flex;
+            border-bottom: 2px solid #f0f0f0;
+        }
+        .tab-btn {
+            flex: 1;
+            padding: 15px;
+            background: white;
+            border: none;
+            font-size: 14px;
+            font-weight: 600;
+            color: #666;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        .tab-btn.active {
+            color: #2196F3;
+            border-bottom: 3px solid #2196F3;
+        }
+        .tab-content {
+            padding: 30px;
+        }
+        .chart-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 30px;
+            margin-bottom: 30px;
+        }
+        .chart-container {
+            background: white;
+            padding: 25px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .chart-title {
+            font-size: 16px;
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 20px;
+        }
+        .chart-placeholder {
+            width: 100%;
+            height: 300px;
+            background: linear-gradient(135deg, #f5f5f5 0%, #e0e0e0 100%);
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #999;
+            font-size: 14px;
+        }
+        .bar-chart {
+            height: 250px;
+            display: flex;
+            align-items: flex-end;
+            gap: 15px;
+            padding: 20px 0;
+        }
+        .bar {
+            flex: 1;
+            background: linear-gradient(180deg, #2196F3 0%, #1976D2 100%);
+            border-radius: 4px 4px 0 0;
+            position: relative;
+            transition: all 0.3s;
+        }
+        .bar:hover {
+            opacity: 0.8;
+        }
+        .bar-label {
+            position: absolute;
+            bottom: -25px;
+            width: 100%;
+            text-align: center;
+            font-size: 12px;
+            color: #666;
+        }
+        .pie-chart {
+            width: 200px;
+            height: 200px;
+            margin: 0 auto;
+            position: relative;
+        }
+        .pie-slice {
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            background: conic-gradient(
+                #4CAF50 0% 94.2%,
+                #FF9800 94.2% 97.7%,
+                #f44336 97.7% 100%
+            );
+        }
+        .pie-legend {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            margin-top: 20px;
+        }
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 13px;
+        }
+        .legend-color {
+            width: 16px;
+            height: 16px;
+            border-radius: 3px;
+        }
+        .actions {
+            display: flex;
+            gap: 10px;
+            justify-content: flex-end;
+        }
+        .btn {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 6px;
+            font-size: 14px;
+            cursor: pointer;
+        }
+        .btn-secondary {
+            background: white;
+            color: #666;
+            border: 1px solid #ddd;
+        }
+        .btn-primary {
+            background: #2196F3;
+            color: white;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <div class="header-left">
+            <div class="logo">🚚</div>
+            <div class="app-name">トラック配送管理</div>
+        </div>
+    </div>
+
+    <div class="container">
+        <div class="page-header">
+            <h1 class="page-title">KPIダッシュボード</h1>
+            <div class="filter-section">
+                <span style="font-size: 14px; color: #666;">期間:</span>
+                <input type="date" class="date-input" value="2025-01-01">
+                <span style="font-size: 14px; color: #666;">～</span>
+                <input type="date" class="date-input" value="2025-01-31">
+                <select class="select">
+                    <option>全拠点</option>
+                    <option>東京</option>
+                    <option>横浜</option>
+                    <option>千葉</option>
+                </select>
+            </div>
+        </div>
+
+        <!-- 主要KPI -->
+        <div class="kpi-grid">
+            <div class="kpi-card">
+                <div class="kpi-header">
+                    <div class="kpi-title">定時配送率</div>
+                    <div class="kpi-target">目標: 95%</div>
+                </div>
+                <div class="kpi-value success">94.2%</div>
+                <div class="progress-bar-kpi">
+                    <div class="progress-fill-kpi success" style="width: 99.2%;"></div>
+                </div>
+                <div class="achievement-rate">
+                    達成率: <span class="achievement-value">99.2%</span>
+                </div>
+            </div>
+
+            <div class="kpi-card">
+                <div class="kpi-header">
+                    <div class="kpi-title">配送効率 (件/km)</div>
+                    <div class="kpi-target">目標: 8.0件/km</div>
+                </div>
+                <div class="kpi-value">8.5件/km</div>
+                <div class="progress-bar-kpi">
+                    <div class="progress-fill-kpi" style="width: 106.3%;"></div>
+                </div>
+                <div class="achievement-rate">
+                    達成率: <span class="achievement-value">106.3%</span>
+                </div>
+            </div>
+
+            <div class="kpi-card">
+                <div class="kpi-header">
+                    <div class="kpi-title">問題発生率</div>
+                    <div class="kpi-target">目標: 2%以下</div>
+                </div>
+                <div class="kpi-value success">1.2%</div>
+                <div class="progress-bar-kpi">
+                    <div class="progress-fill-kpi success" style="width: 60%;"></div>
+                </div>
+                <div class="achievement-rate">
+                    <span class="achievement-value">達成</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- タブ -->
+        <div class="tabs">
+            <div class="tab-header">
+                <button class="tab-btn active">配送実績</button>
+                <button class="tab-btn">車両稼働</button>
+                <button class="tab-btn">ドライバー</button>
+                <button class="tab-btn">コスト</button>
+            </div>
+            <div class="tab-content">
+                <!-- チャート -->
+                <div class="chart-grid">
+                    <div class="chart-container">
+                        <div class="chart-title">日別配送件数</div>
+                        <div class="bar-chart">
+                            <div class="bar" style="height: 80%;">
+                                <div class="bar-label">1/15</div>
+                            </div>
+                            <div class="bar" style="height: 90%;">
+                                <div class="bar-label">1/16</div>
+                            </div>
+                            <div class="bar" style="height: 75%;">
+                                <div class="bar-label">1/17</div>
+                            </div>
+                            <div class="bar" style="height: 95%;">
+                                <div class="bar-label">1/18</div>
+                            </div>
+                            <div class="bar" style="height: 85%;">
+                                <div class="bar-label">1/19</div>
+                            </div>
+                            <div class="bar" style="height: 100%;">
+                                <div class="bar-label">1/20</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="chart-container">
+                        <div class="chart-title">配送結果内訳</div>
+                        <div class="pie-chart">
+                            <div class="pie-slice"></div>
+                        </div>
+                        <div class="pie-legend">
+                            <div class="legend-item">
+                                <div class="legend-color" style="background: #4CAF50;"></div>
+                                <span>完了: 94.2%</span>
+                            </div>
+                            <div class="legend-item">
+                                <div class="legend-color" style="background: #FF9800;"></div>
+                                <span>一部配送: 3.5%</span>
+                            </div>
+                            <div class="legend-item">
+                                <div class="legend-color" style="background: #f44336;"></div>
+                                <span>配送不可: 2.3%</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="chart-container" style="grid-column: 1 / -1;">
+                        <div class="chart-title">地域別配送密度 (ヒートマップ)</div>
+                        <div class="chart-placeholder">
+                            🗺️ ヒートマップ表示エリア
+                        </div>
+                    </div>
+                </div>
+
+                <!-- アクション -->
+                <div class="actions">
+                    <button class="btn btn-secondary">📊 レポート出力 (PDF)</button>
+                    <button class="btn btn-primary">📥 データエクスポート (Excel)</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
