@@ -227,11 +227,77 @@ npx prisma generate
 npx prisma db pull
 ```
 
+## 📚 ドキュメント
+
+このプロジェクトには以下の詳細ドキュメントが用意されています：
+
+| ドキュメント | 説明 |
+|------------|------|
+| [SETUP_GUIDE.md](./SETUP_GUIDE.md) | 詳細なセットアップ手順（初心者向け） |
+| [API_DOCUMENTATION.md](./API_DOCUMENTATION.md) | 完全なAPI仕様書 |
+| [DEPLOYMENT.md](./DEPLOYMENT.md) | 本番環境デプロイ手順 |
+| [TESTING.md](./TESTING.md) | テスト実行方法 |
+| [PROJECT_SUMMARY.md](./PROJECT_SUMMARY.md) | プロジェクト全体サマリー |
+| [FAQ.md](./FAQ.md) | よくある質問 |
+| [GITHUB_UPLOAD.md](./GITHUB_UPLOAD.md) | GitHubアップロード手順 |
+
+### 設計ドキュメント
+
+| ドキュメント | 説明 |
+|------------|------|
+| [01_要件定義・前提条件.md](./01_要件定義・前提条件.md) | 業務要件・システム要件 |
+| [02_データモデル設計.md](./02_データモデル設計.md) | ERD・テーブル定義（17テーブル） |
+| [03_運用フロー・機能概要設計.md](./03_運用フロー・機能概要設計.md) | 業務フロー・機能詳細 |
+| [04_画面一覧・画面詳細設計.md](./04_画面一覧・画面詳細設計.md) | 全39画面の仕様 |
+| [05_技術仕様・アーキテクチャ設計.md](./05_技術仕様・アーキテクチャ設計.md) | 技術選定・実装方針 |
+
+### 画面モックアップ
+
+`mockups/` フォルダに9つのHTMLモックアップがあります：
+- Web版: 5画面（ログイン、ダッシュボード、配送依頼一覧、配車計画、進捗モニター）
+- モバイル版: 3画面（配送計画、実績入力、電子サイン）
+- 管理画面: 1画面（KPIダッシュボード）
+
+詳細は [mockups/README.md](./mockups/README.md) を参照してください。
+
+## 🚀 クイックスタート
+
+### 簡易セットアップ（経験者向け）
+
+```bash
+# リポジトリクローン
+git clone https://github.com/okab130/new_trans.git
+cd new_trans
+
+# バックエンド起動
+cd backend
+npm install
+cp .env.example .env
+# .env編集してデータベース接続情報を設定
+npx prisma migrate dev
+npm run dev
+
+# フロントエンド起動（別ターミナル）
+cd ../frontend
+npm install
+npm run dev
+```
+
+### 詳細な手順
+
+初めての方は [SETUP_GUIDE.md](./SETUP_GUIDE.md) を参照してください。
+
 ## ライセンス
 This project is proprietary and confidential.
 
 ## 作成者
 AI駆動開発チーム
 
+## 🔗 リンク
+
+- **GitHubリポジトリ**: https://github.com/okab130/new_trans
+- **Issue報告**: https://github.com/okab130/new_trans/issues
+
 ## 更新履歴
 - 2025-01-20: プロジェクト初期セットアップ
+- 2025-01-20: 完全なドキュメント追加（セットアップ、API、デプロイ、FAQ）
